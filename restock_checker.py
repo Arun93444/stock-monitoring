@@ -23,13 +23,8 @@ from datetime import datetime
 DEFAULT_INPUT = "stock.csv"
 OUTPUT_CSV = "restock_report.csv"
 
-# Below this fraction of the threshold, an item is "Critical" instead
-# of just "Low".
 CRITICAL_FRACTION = 0.25
 
-# How far above the threshold we want to land after reordering.
-# 1.5x threshold gives a comfortable buffer instead of restocking to
-# exactly the trigger point.
 TARGET_STOCK_MULTIPLIER = 1.5
 
 
@@ -107,7 +102,6 @@ def classify_item(item):
     threshold = item["reorder_threshold"]
 
     if threshold == 0:
-        # A threshold of 0 means "no minimum defined" -- nothing to flag.
         return None
 
     if qty > threshold:
@@ -129,7 +123,6 @@ def classify_item(item):
 def build_restock_list(items):
     flagged = [classify_item(item) for item in items]
     flagged = [item for item in flagged if item is not None]
-    # Critical items first, then Low; within each group, lowest stock first.
     flagged.sort(key=lambda i: (i["priority"] != "Critical", i["current_quantity"]))
     return flagged
 
@@ -229,12 +222,3 @@ def main():
 if __name__ == "__main__":
     main()
 
-
-# --- Reflection ------------------------------------------------------
-# With more time I'd add: (1) real email delivery via smtplib/SendGrid
-# instead of a printed simulation, (2) a small scheduler wrapper
-# (cron/APScheduler) so this genuinely runs unattended daily, (3) a
-# supplier/SKU lookup so the reorder suggestion ties to an actual PO,
-# and (4) historical trend tracking (append each run's snapshot to a
-# log) so thresholds could be adjusted based on real consumption
-# patterns instead of a fixed number.
