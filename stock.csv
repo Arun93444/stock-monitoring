@@ -1,0 +1,9 @@
+item_name,current_quantity,reorder_threshold
+Widget A,45,50
+Widget B,12,40
+Bolt Pack,0,20
+Steel Rod,88,30
+Gasket Set,,15
+Paint Can,7,25
+Cable Tie,150,100
+Filter X,3,20

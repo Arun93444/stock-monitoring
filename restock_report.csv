@@ -1,0 +1,6 @@
+item_name,current_quantity,reorder_threshold,priority,suggested_reorder_qty
+Bolt Pack,0.0,20.0,Critical,30
+Filter X,3.0,20.0,Critical,27
+Paint Can,7.0,25.0,Low,30
+Widget B,12.0,40.0,Low,48
+Widget A,45.0,50.0,Low,30
