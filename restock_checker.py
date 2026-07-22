@@ -1,21 +1,3 @@
-"""
-restock_checker.py
-
-Reads a warehouse stock CSV, flags any item at or below its reorder
-threshold, and produces a plain-English restock report.
-
-Meant to run as a daily unattended job (e.g. via cron / Task Scheduler) --
-no manual checking required.
-
-Usage:
-    python restock_checker.py [path_to_csv]
-
-    If no path is given, defaults to "stock.csv" in the same folder.
-
-Expected CSV columns (header row required):
-    item_name, current_quantity, reorder_threshold
-"""
-
 import csv
 import sys
 from datetime import datetime
@@ -27,13 +9,7 @@ CRITICAL_FRACTION = 0.25
 
 TARGET_STOCK_MULTIPLIER = 1.5
 
-
 def load_stock_data(filepath):
-    """
-    Reads the CSV and returns a list of dicts, one per valid row.
-    Skips (and reports) rows that are missing data or can't be parsed
-    as numbers, rather than crashing the whole job.
-    """
     items = []
     skipped = []
 
@@ -46,7 +22,7 @@ def load_stock_data(filepath):
                 missing = required_cols - set(reader.fieldnames or [])
                 raise ValueError(f"CSV is missing required column(s): {missing}")
 
-            for row_num, row in enumerate(reader, start=2):  # row 1 = header
+            for row_num, row in enumerate(reader, start=2): 
                 name = (row.get("item_name") or "").strip()
                 qty_raw = (row.get("current_quantity") or "").strip()
                 threshold_raw = (row.get("reorder_threshold") or "").strip()
@@ -91,13 +67,7 @@ def load_stock_data(filepath):
 
     return items
 
-
 def classify_item(item):
-    """
-    Compares current quantity to threshold and returns the item with
-    priority ('Critical' / 'Low' / None) and a suggested reorder qty
-    added on, or None if the item doesn't need restocking.
-    """
     qty = item["current_quantity"]
     threshold = item["reorder_threshold"]
 
@@ -147,10 +117,6 @@ def print_console_report(flagged):
 
 
 def build_email_alert(flagged):
-    """
-    Formats the report as a simulated email (subject + body), the way
-    an automated alert to a warehouse manager might look.
-    """
     critical_count = sum(1 for i in flagged if i["priority"] == "Critical")
     low_count = len(flagged) - critical_count
 
